@@ -9,3 +9,7 @@
 
 # Personal files
 .Ruserdata
+
+# Project data files and output files
+*.tiff
+*.rds
