@@ -17,7 +17,8 @@ The file structure shows as below :
     └── requirements.R # The environment required by the project.
 ```
 
-- Subdirs in `Plots` are accordant with the Rscripts in `src` from which they are derived.
+- Subdirs in `Plots` and intermediate objects in `data` are accordant with the Rscripts in `src` from 
+    which they are derived.
 - Figures in `Plots` are named as `contents_to_plot_function_to_use.tiff`.
 - When running Rscript in `src`, the work dir should be `/your/path/to/GBM_scRNA_seq`, 
     not `/your/path/to/GBM_scRNA_seq/src`.
