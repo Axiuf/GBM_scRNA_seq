@@ -7,6 +7,7 @@
 
 # Set environment.
 source("requirements.R")
+dir.create("./plots/6_GBM_total_merge_Simplified_workflow")
 fig_dpi <- 150
 
 

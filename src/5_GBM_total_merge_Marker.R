@@ -1,5 +1,6 @@
 # Set environment.
 source("requirements.R")
+dir.create("./plots/5_GBM_total_merge_Marker")
 fig_dpi <- 150
 
 

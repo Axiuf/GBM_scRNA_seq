@@ -1,5 +1,7 @@
 # Set environment.
 source("requirements.R")
+dir.create("./plots/2_GBM_total_merge_QC")
+dir.create("./plots/2_GBM_total_merge_QC/percent.mt_VlnPlot")
 fig_dpi <- 150
 
 # Get Seurat object.

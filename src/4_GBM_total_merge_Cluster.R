@@ -3,6 +3,7 @@
 
 # Set environment.
 source("requirements.R")
+dir.create("./plots/4_GBM_total_merge_Cluster")
 fig_dpi <- 150
 
 # Get Seurat object.
