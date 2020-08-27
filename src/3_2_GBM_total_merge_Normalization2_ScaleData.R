@@ -25,7 +25,7 @@ GBM <- FindVariableFeatures(GBM, selection.method = "vst", nfeatures = 3000)
 
 # Scaling the data
 all.genes <- rownames(GBM)
-GBM <- ScaleData(GBM, vars.to.regress = "percent.mt", features = all.genes)
+GBM <- ScaleData(GBM, features = all.genes)
 
 
 saveRDS(GBM, file = "./data/3_2_GBM_total_merge_filtered_Normalization2_Scale.rds")
