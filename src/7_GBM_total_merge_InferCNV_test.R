@@ -8,7 +8,7 @@ library(infercnv)
 
 
 # Take args from the bash script.
-win_len = commandArgs(TRUE)
+win_len <- commandArgs(TRUE)
 win_len <- as.numeric(win_len)
 
 
@@ -31,11 +31,11 @@ GBM <- merge(GBM.list[[1]], GBM.list[c(2:25)])
 
 
 # Get counts matrix.
-counts_matrix = GetAssayData(GBM, slot = "counts")
+counts_matrix <- GetAssayData(GBM, slot = "counts")
 
 
 # Get cell annotations.
-cell_Annotations = GBM@meta.data["infercnv_type_tumor_patient"]
+cell_Annotations <- GBM@meta.data["infercnv_type_tumor_patient"]
 write.table(cell_Annotations, file = paste0(subdir_path, '/cell_Annotations.txt'), quote = F, sep= "\t", col.names = FALSE)
 
 
