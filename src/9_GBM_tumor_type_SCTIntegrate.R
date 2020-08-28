@@ -67,7 +67,7 @@ for(cluster_resolution in cluster_resolutions){
 
 # Determine metrics to plot present in GBM@meta.data
 metrics <-  c("nCount_RNA", "nFeature_RNA", "S.Score", "G2M.Score", "percent.mt")
-FeaturePlot(GBM, 
+FeaturePlot(GBM.integrated, 
             reduction = "umap", 
             features = metrics,
             pt.size = 0.1, 
@@ -77,4 +77,4 @@ FeaturePlot(GBM,
 ggsave(filename = "metrics_FeaturePlot.tiff", device = "tiff", path = subdir_path, width = 16, height = 21, dpi = fig_dpi)
 
 
-saveRDS(GBM, file = paste0(subdir_path, "/", "integrate_dim_", integrate_dim[1], ".rds"))
+saveRDS(GBM.integrated, file = paste0(subdir_path, "/", "integrate_dim_", integrate_dim[1], ".rds"))
