@@ -13,13 +13,13 @@ win_len <- as.numeric(win_len)
 
 
 # Creat output dir.
-dir.create("./data/7_GBM_total_merge_InferCNV_test")
-subdir_path <- paste0("./data/7_GBM_total_merge_InferCNV_test/", "window_length_", win_len[1])
+dir.create("./data/07_GBM_total_merge_InferCNV_test")
+subdir_path <- paste0("./data/07_GBM_total_merge_InferCNV_test/", "window_length_", win_len[1])
 dir.create(subdir_path)
 
 
 # Get the Seurat object and downsample.
-GBM <- readRDS("./data/5_GBM_total_merge_filtered_SCT_umap&tsne_Marker.rds")
+GBM <- readRDS("./data/05_GBM_total_merge_filtered_SCT_umap&tsne_Marker.rds")
 Idents(GBM) <- "infercnv_type_tumor_patient"
 GBM <- subset(GBM, downsample = 500)
 

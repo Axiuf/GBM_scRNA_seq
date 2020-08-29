@@ -7,12 +7,12 @@
 
 # Set environment.
 source("requirements.R")
-dir.create("./plots/6_GBM_total_merge_Simplified_workflow")
+dir.create("./plots/06_GBM_total_merge_Simplified_workflow")
 fig_dpi <- 150
 
 
 # Get Seurat object.
-GBM <- readRDS("./data/raw_objects/merged_objects/GBM_total_merge.rds")
+GBM <- readRDS("./data/01_Creat_seurat_objects/merged_objects/GBM_total_merge.rds")
 
 
 # QC
@@ -68,7 +68,7 @@ for(cluster_resolution in cluster_resolutions){
   plot1 <- DimPlot(GBM, reduction = "umap", pt.size = 0.1, group.by = paste0("SCT_snn_res.", cluster_resolution), label = TRUE)
   plot2 <- DimPlot(GBM, reduction = "umap", pt.size = 0.1, group.by = "orig.ident", label = TRUE)
   plot1 + plot2
-  ggsave(filename = paste0("umap_res", cluster_resolution, "_DimHeatmap.tiff"), device = "tiff", path = "./plots/6_GBM_total_merge_Simplified_workflow",width = 20, height = 7, dpi = fig_dpi)
+  ggsave(filename = paste0("umap_res", cluster_resolution, "_DimHeatmap.tiff"), device = "tiff", path = "./plots/06_GBM_total_merge_Simplified_workflow",width = 20, height = 7, dpi = fig_dpi)
 }
 
 
@@ -81,7 +81,7 @@ FeaturePlot(GBM,
             order = TRUE,
             min.cutoff = 'q15',
             label = TRUE)
-ggsave(filename = "metrics_FeaturePlot.tiff", device = "tiff", path = "./plots/6_GBM_total_merge_Simplified_workflow", width = 16, height = 21, dpi = fig_dpi)
+ggsave(filename = "metrics_FeaturePlot.tiff", device = "tiff", path = "./plots/06_GBM_total_merge_Simplified_workflow", width = 16, height = 21, dpi = fig_dpi)
 
 
-saveRDS(GBM, file = "./data/6_GBM_total_merge_Simplified_workflow_regress_mt.rds")
+saveRDS(GBM, file = "./data/06_GBM_total_merge_Simplified_workflow_regress_mt.rds")

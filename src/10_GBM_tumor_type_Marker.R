@@ -5,7 +5,7 @@ fig_dpi <- 150
 
 
 # Get Seurat object.
-GBM <- readRDS("./data/9_GBM_tumor_type_SCTIntegrate.rds")
+GBM <- readRDS("./data/09_GBM_tumor_type_SCTIntegrate.rds")
 
 
 # Determine metrics to plot present in GBM@meta.data
