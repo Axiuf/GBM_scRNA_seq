@@ -13,5 +13,6 @@
 # Project data files and output files
 *.tiff
 *.png
+*.pdf
 *.rds
 *.pptx
