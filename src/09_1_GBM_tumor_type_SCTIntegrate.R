@@ -1,3 +1,7 @@
+# First, divide all data into three data sets by their tumor type: "Primary", "Secondary", "Recurrent".
+# Then, SCTIntegrate these three data sets.
+
+
 # Set environment.
 source("requirements.R")
 fig_dpi <- 150
@@ -9,10 +13,10 @@ integrate_dim <- as.numeric(integrate_dim)
 
 
 # Creat output dir.
-dir.create("./plots/09_GBM_tumor_type_SCTIntegrate")
-plots_dir <- paste0("./plots/09_GBM_tumor_type_SCTIntegrate/", "integrate_dim_", integrate_dim[1])
+dir.create("./plots/09_1_GBM_tumor_type_SCTIntegrate")
+plots_dir <- paste0("./plots/09_1_GBM_tumor_type_SCTIntegrate/", "integrate_dim_", integrate_dim[1])
 dir.create(plots_dir)
-data_dir <- "./data/09_GBM_tumor_type_SCTIntegrate"
+data_dir <- "./data/09_1_GBM_tumor_type_SCTIntegrate"
 dir.create(data_dir)
 
 
@@ -39,8 +43,8 @@ for (i in 1:length(GBM.list)) {
 
 # Standerd SCTIntegrate workflow.
 GBM.features <- SelectIntegrationFeatures(object.list = GBM.list, nfeatures = 3000)
-GBM.list <- PrepSCTIntegration(object.list = GBM.list, anchor.features = GBM.features)
 
+GBM.list <- PrepSCTIntegration(object.list = GBM.list, anchor.features = GBM.features)
 
 GBM.anchors <- FindIntegrationAnchors(object.list = GBM.list, normalization.method = "SCT", dims = 1:integrate_dim,
                                       anchor.features = GBM.features)
@@ -63,7 +67,8 @@ GBM.integrated <- RunUMAP(GBM.integrated, dims = 1:50)
 for(cluster_resolution in cluster_resolutions){
   plot1 <- DimPlot(GBM.integrated, reduction = "umap", pt.size = 0.1, group.by = paste0("integrated_snn_res.", cluster_resolution), label = TRUE)
   plot2 <- DimPlot(GBM.integrated, reduction = "umap", pt.size = 0.1, group.by = "tumor_type")
-  plot1 + plot2
+  plot3 <- DimPlot(GBM.integrated, reduction = "umap", pt.size = 0.1, group.by = "patient")
+  plot1 + plot2 + plot3
   ggsave(filename = paste0("umap_res", cluster_resolution, "_DimHeatmap.tiff"), device = "tiff", path = plots_dir, width = 16, height = 7, dpi = fig_dpi)
 }
 
