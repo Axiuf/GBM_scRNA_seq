@@ -38,4 +38,5 @@ infercnv_obj = infercnv::run(infercnv_obj,
                              cluster_by_groups = TRUE, 
                              denoise = TRUE,
                              HMM = TRUE, 
+                             output_format = "pdf",
                              save_rds = TRUE)
