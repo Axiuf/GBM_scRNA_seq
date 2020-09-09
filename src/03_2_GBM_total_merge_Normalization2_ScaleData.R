@@ -1,25 +1,25 @@
-# Seurat provides an improved method for normalization in the recent update "Seurat v3". Hence we will explore 
-# the different preprocessing in two seperate workflows.
-# Please see more information in satijalab.org/seurat/.
-# Here is the ScaleData workflow.
+# Seurat provides an improved method for normalization in the recent update "Seurat v3", 
+# Hence we will explore the different preprocessing in two seperate workflows.
+# Please see more information in satijalab.org/seurat/
+# Here is the ScaleData workflow
 
 
-# Set environment.
+# Set environment
 source("requirements.R")
 
 
-# Get Seurat object.
+# Get Seurat object
 GBM <- readRDS("./data/02_GBM_total_merge_filtered.rds")
 
 
-# Normalize data & Calculate cell cycle score.
+# Normalize data & Calculate cell cycle score
 GBM <- NormalizeData(GBM, normalization.method = "LogNormalize", scale.factor = 100000)
 
 load("./data/cycle.rda")
 GBM <- CellCycleScoring(GBM, g2m.features = g2m_genes, s.features = s_genes)
 
 
-# Identification of highly variable features.
+# Identification of highly variable features
 GBM <- FindVariableFeatures(GBM, selection.method = "vst", nfeatures = 3000)
 
 

@@ -22,3 +22,5 @@ The file structure shows as below :
 - Figures in `Plots` are named as `contents_to_plot_function_to_use.tiff`.
 - When running Rscript in `src`, the work dir should be `/your/path/to/GBM_scRNA_seq`, 
     not `/your/path/to/GBM_scRNA_seq/src`.
+- Seurat objects in all source files are named `GBM` for convenient of code reuse. Check which file is loaded
+    to figure out the exact object being processed.
