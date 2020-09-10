@@ -2,6 +2,8 @@
 library(Seurat)
 library(sctransform)
 
+library(dplyr)
+
 library(patchwork)
 library(ggplot2)
 
@@ -11,4 +13,4 @@ plan("multiprocess", workers = 8)
 options(future.globals.maxSize = 64 * 1024 * 1024^2)
 
 # Change to 300 for officially output
-fig_dpi <- 150
+fig_dpi <- 300

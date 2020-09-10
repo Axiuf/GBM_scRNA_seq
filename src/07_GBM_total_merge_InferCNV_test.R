@@ -44,7 +44,7 @@ write.table(cell_Annotations, file = paste0(data_subdir, "/cell_Annotations.txt"
 # Infer CNV
 infercnv_obj = CreateInfercnvObject(raw_counts_matrix = counts_matrix,
                                     annotations_file = paste0(data_subdir, "/cell_Annotations.txt"),
-                                    gene_order_file = "./data/gencode_v19_gen_pos.complete.txt",
+                                    gene_order_file = "./data/supplementaries/gencode_v19_gen_pos.complete.txt",
                                     delim = "\t",
                                     ref_group_names = c("Macrophage / Microglia", "Oligodendrocyte", "T cell"))
 

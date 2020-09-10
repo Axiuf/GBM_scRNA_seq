@@ -40,7 +40,7 @@ Idents(GBM) <- "orig.ident"
 # Calculate cell cycle score
 GBM <- NormalizeData(GBM, normalization.method = "LogNormalize", scale.factor = 100000)
 
-load("./data/cycle.rda")
+load("./data/supplementaries/cycle.rda")
 GBM <- CellCycleScoring(GBM, g2m.features = g2m_genes, s.features = s_genes)
 
 

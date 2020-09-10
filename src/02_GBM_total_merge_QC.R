@@ -90,7 +90,7 @@ metadata %>%
   geom_hline(yintercept = 600) +
   facet_wrap(~orig.ident)
 ggsave(filename = "percent.mt_geom_point.tiff",
-       device = "tiff", plots_dir, width = 25, height = 40, dpi = fig_dpi)
+       device = "tiff", path = plots_dir, width = 25, height = 40, dpi = fig_dpi)
 
 metadata %>% 
   ggplot(aes(color = orig.ident, x = percent.mt, fill = orig.ident)) + 

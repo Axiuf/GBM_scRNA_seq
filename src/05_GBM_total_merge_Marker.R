@@ -24,8 +24,8 @@ Secondary_samples <- c("P632", "P645", "P679_yang", "P679_yin", "P711")
 
 GBM$tumor_type <- NA
 GBM$tumor_type[GBM$orig.ident %in% Primary_samples] <- "Primary"
-GBM$tumor_type[GBM$orig.ident %in% Secondary_samples] <- "Recurrent"
-GBM$tumor_type[GBM$orig.ident %in% Recurrent_samples] <- "Secondary"
+GBM$tumor_type[GBM$orig.ident %in% Secondary_samples] <- "Secondary"
+GBM$tumor_type[GBM$orig.ident %in% Recurrent_samples] <- "Recurrent"
 
 GBM$infercnv_type_patient <- GBM$orig.ident
 GBM$infercnv_type_patient[GBM$SCT_snn_res.0.2 %in% c(0, 9, 10, 19, 21)] <- "Macrophage / Microglia"
