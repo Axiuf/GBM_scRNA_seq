@@ -1,7 +1,7 @@
 # Seurat provides an improved method for normalization in the recent update "Seurat v3",
-# Hence we will explore the different preprocessing in two seperate workflows.
+# hence we will explore the different preprocessing in two separate work flows.
 # Please see more information in satijalab.org/seurat/
-# Here is the SCTransform workflow
+# Here is the SCTransform work flow
 
 
 # Set environment

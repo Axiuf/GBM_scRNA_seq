@@ -1,27 +1,29 @@
-# Set environment.
+# Set environment
 source("requirements.R")
-plot_dir <- "./plots/10_2_GBM_tumor_type_Marker"
-dir.create(plot_dir)
+
+
+plots_dir <- "./plots/10_2_GBM_tumor_type_Marker"
+dir.create(plots_dir)
 data_dir <- "./data/10_2_GBM_tumor_type_Marker"
 dir.create(data_dir)
-fig_dpi <- 150
 
 
-# Get Seurat object.
+# Get Seurat object
 GBM <- readRDS("./data/09_2_GBM_tumor_type_SCTIntegrate/integrate_dim_30.rds")
 DefaultAssay(GBM) <- "RNA"
 Idents(GBM) <- "integrated_snn_res.0.2"
 
 
-# Plot Clusters.
-plot1 <- DimPlot(GBM, reduction = "umap", pt.size = 0.1, group.by = "integrated_snn_res.0.2", label = TRUE)
-plot2 <- DimPlot(GBM, reduction = "umap", pt.size = 0.1, group.by = "tumor_type")
-plot3 <- DimPlot(GBM, reduction = "umap", pt.size = 0.1, group.by = "patient")
+# Plot Clusters
+plot1 <- DimPlot(GBM, reduction = "umap", group.by = "integrated_snn_res.0.2", pt.size = 0.1, label = TRUE)
+plot2 <- DimPlot(GBM, reduction = "umap", group.by = "tumor_type", pt.size = 0.1)
+plot3 <- DimPlot(GBM, reduction = "umap", group.by = "patient", pt.size = 0.1)
 plot1 + plot2 + plot3
-ggsave(filename = "cluster_tumor_patient_dimplot.tiff", device = "tiff", path = plot_dir, width = 24, height = 7, dpi = fig_dpi)
+ggsave(filename = "cluster_tumor_patient_DimPlot.tiff",
+       device = "tiff", path = plots_dir, width = 24, height = 7, dpi = fig_dpi)
 
 
-# Plot metrics.
+# Plot metrics
 metrics <-  c("nCount_RNA", "nFeature_RNA", "S.Score", "G2M.Score", "percent.mt")
 FeaturePlot(GBM, reduction = "umap", 
             features = metrics,
@@ -29,43 +31,55 @@ FeaturePlot(GBM, reduction = "umap",
             order = TRUE,
             min.cutoff = 'q15',
             label = TRUE)
-ggsave(filename = "metrics_FeaturePlot.tiff", device = "tiff", path = plot_dir, width = 16, height = 21, dpi = fig_dpi)
+ggsave(filename = "metrics_FeaturePlot.tiff",
+       device = "tiff", path = plots_dir, width = 16, height = 21, dpi = fig_dpi)
 
 
-# Plot percent.mt distribution.
+# Plot percent.mt distribution
 metadata <- GBM@meta.data
 metadata %>% 
   ggplot(aes(color = tumor_type, x = percent.mt, fill = tumor_type)) + 
   geom_histogram(alpha = 0.3, binwidth = 1, position = "dodge2", color = "white") +
   geom_freqpoly(alpha = 1, binwidth = 1, position = "dodge2") + 
   theme_classic()
-ggsave(filename = "percent.mt_geom_freqpoly.tiff", device = "tiff", path = plot_dir, width = 10, height = 5, dpi = fig_dpi)
+ggsave(filename = "percent.mt_geom_freqpoly.tiff",
+       device = "tiff", path = plots_dir, width = 10, height = 5, dpi = fig_dpi)
 
 
 # Plot CD133_patient subset
-FeaturePlot(GBM, features = c("PROM1"), reduction = "umap", min.cutoff = 'q15', pt.size = 0.1, label = TRUE, order = TRUE)
-ggsave(filename = "PROM1_FeaturePlot.tiff", device = "tiff", path = plot_dir, dpi = fig_dpi)
+FeaturePlot(GBM, features = c("PROM1"), reduction = "umap",
+            min.cutoff = 'q15', pt.size = 0.1, label = TRUE, order = TRUE)
+ggsave(filename = "PROM1_FeaturePlot.tiff", device = "tiff", path = plots_dir, dpi = fig_dpi)
 
-GBM_CD133 <- subset(GBM, subset = patient %in% c("P828_CD133Posi", "P828_CD133Neq", "P843_CD133posi", "P843_CD133Neg"))
-DimPlot(GBM_CD133, reduction = "umap", pt.size = 1, split.by = "patient", group.by = "integrated_snn_res.0.2", label = TRUE)
-ggsave(filename = "patient_CD133_DimPlot.tiff", device = "tiff", path = plot_dir, width = 28, dpi = fig_dpi)
+GBM_CD133 <- subset(GBM,
+                    subset = patient %in% c("P828_CD133Posi", "P828_CD133Neq", "P843_CD133posi", "P843_CD133Neg"))
+DimPlot(GBM_CD133, reduction = "umap", split.by = "patient", group.by = "integrated_snn_res.0.2",
+        pt.size = 1, label = TRUE)
+ggsave(filename = "patient_CD133_DimPlot.tiff", device = "tiff", path = plots_dir, width = 28, dpi = fig_dpi)
 
 Idents(GBM) <- "patient"
-VlnPlot(GBM, features = "PROM1", pt.size = 1, idents = c("P828_CD133Posi", "P828_CD133Neq", "P843_CD133posi", "P843_CD133Neg"))
-ggsave(filename = "patient_CD133_VlnPlot.tiff", device = "tiff", path = plot_dir, width = 7, dpi = fig_dpi)
+VlnPlot(GBM, features = "PROM1", idents = c("P828_CD133Posi", "P828_CD133Neq", "P843_CD133posi", "P843_CD133Neg"),
+        pt.size = 1)
+ggsave(filename = "patient_CD133_VlnPlot.tiff", device = "tiff", path = plots_dir, width = 7, dpi = fig_dpi)
 Idents(GBM) <- "integrated_snn_res.0.2"
 
 
 # Plot different markers.
 # https://doi.org/10.1038/s41467-020-17186-5
-FeaturePlot(GBM, features = c("TOP2A", "AURKB", "FOXM1", "TYMS", "USP1", "EZH2"), reduction = "umap", min.cutoff = 'q15', pt.size = 0.1, label = TRUE, order = TRUE)
-ggsave(filename = "Cell_cycle_markers_FeaturePlot.tiff", device = "tiff", path = plot_dir,width = 16, height = 21, dpi = fig_dpi)
+FeaturePlot(GBM, features = c("TOP2A", "AURKB", "FOXM1", "TYMS", "USP1", "EZH2"), reduction = "umap",
+            min.cutoff = 'q15', pt.size = 0.1, label = TRUE, order = TRUE)
+ggsave(filename = "Cell_cycle_markers_FeaturePlot.tiff",
+       device = "tiff", path = plots_dir,width = 16, height = 21, dpi = fig_dpi)
 
-FeaturePlot(GBM, features = c("APOD", "OLIG2", "STMN1", "DCX", "SOX11", "TNC", "CD44", "S100A10", "VIM", "HLA-A", "APOE", "HSPA1B", "DNAJB1", "HSPA6"), reduction = "umap", min.cutoff = 'q15', pt.size = 0.1, label = TRUE, order = TRUE)
-ggsave(filename = "Cell_type_markers_FeaturePlot.tiff", device = "tiff", path = plot_dir,width = 30, height = 30, dpi = fig_dpi)
+signature_markers <- c("APOD", "OLIG2", "STMN1", "DCX", "SOX11", "TNC", "CD44", "S100A10",
+                       "VIM", "HLA-A", "APOE", "HSPA1B", "DNAJB1", "HSPA6")
+FeaturePlot(GBM, features = signature_markers, reduction = "umap",
+            min.cutoff = 'q15', pt.size = 0.1, label = TRUE, order = TRUE)
+ggsave(filename = "Cell_type_markers_FeaturePlot.tiff",
+       device = "tiff", path = plots_dir,width = 30, height = 30, dpi = fig_dpi)
 
 
-# Plot meta modual score by PercentageFeatureSet
+# Plot meta module score by PercentageFeatureSet
 # https://doi.org/10.1016/j.cell.2019.06.024
 library(readxl)
 meta_module <- read_excel("data/1-s2.0-S0092867419306877-mmc2.xlsx", skip = 4)
@@ -81,24 +95,27 @@ GBM[["meta_module_NPC"]] <- GBM[["meta_module_NPC2"]] + GBM[["meta_module_NPC1"]
 
 module_names <- c("meta_module_MES", "meta_module_AC", "meta_module_OPC", 
                   "meta_module_NPC", "meta_module_G1.S", "meta_module_G2.M")
-FeaturePlot(GBM, features = module_names, reduction = "umap", min.cutoff = 'q15', pt.size = 0.1, label = TRUE, order = TRUE)
-ggsave(filename = "meta_module_FeaturePlot.tiff", device = "tiff", path = plot_dir,width = 14, height = 21, dpi = fig_dpi)
+FeaturePlot(GBM, features = module_names, reduction = "umap",
+            min.cutoff = 'q15', pt.size = 0.1, label = TRUE, order = TRUE)
+ggsave(filename = "meta_module_FeaturePlot.tiff",
+       device = "tiff", path = plots_dir,width = 14, height = 21, dpi = fig_dpi)
 
 VlnPlot(GBM, features = module_names, pt.size = 0.01) + NoLegend()
-ggsave(filename = "meta_module_VlnPlot.tiff", device = "tiff", path = plot_dir, width = 21, height = 21, dpi = fig_dpi)
+ggsave(filename = "meta_module_VlnPlot.tiff",
+       device = "tiff", path = plots_dir, width = 21, height = 21, dpi = fig_dpi)
 
 VlnPlot(GBM, features = "meta_module_MES", y.max = 20, pt.size = 0.01) + NoLegend()
-ggsave(filename = "meta_module_MES_VlnPlot.tiff", device = "tiff", path = plot_dir, width = 5, dpi = fig_dpi)
+ggsave(filename = "meta_module_MES_VlnPlot.tiff", device = "tiff", path = plots_dir, width = 5, dpi = fig_dpi)
 VlnPlot(GBM, features = "meta_module_AC", y.max = 15, pt.size = 0.01) + NoLegend()
-ggsave(filename = "meta_module_AC_VlnPlot.tiff", device = "tiff", path = plot_dir, width = 5, dpi = fig_dpi)
+ggsave(filename = "meta_module_AC_VlnPlot.tiff", device = "tiff", path = plots_dir, width = 5, dpi = fig_dpi)
 VlnPlot(GBM, features = "meta_module_OPC", y.max = 7.5, pt.size = 0.01) + NoLegend()
-ggsave(filename = "meta_module_OPC_VlnPlot.tiff", device = "tiff", path = plot_dir, width = 5, dpi = fig_dpi)
+ggsave(filename = "meta_module_OPC_VlnPlot.tiff", device = "tiff", path = plots_dir, width = 5, dpi = fig_dpi)
 VlnPlot(GBM, features = "meta_module_NPC", y.max = 15, pt.size = 0.01) + NoLegend()
-ggsave(filename = "meta_module_NPC_VlnPlot.tiff", device = "tiff", path = plot_dir, width = 5, dpi = fig_dpi)
+ggsave(filename = "meta_module_NPC_VlnPlot.tiff", device = "tiff", path = plots_dir, width = 5, dpi = fig_dpi)
 VlnPlot(GBM, features = "meta_module_G1.S", y.max = 5, pt.size = 0.01) + NoLegend()
-ggsave(filename = "meta_module_G1.S_VlnPlot.tiff", device = "tiff", path = plot_dir, width = 5, dpi = fig_dpi)
+ggsave(filename = "meta_module_G1.S_VlnPlot.tiff", device = "tiff", path = plots_dir, width = 5, dpi = fig_dpi)
 VlnPlot(GBM, features = "meta_module_G2.M", y.max = 5, pt.size = 0.01) + NoLegend()
-ggsave(filename = "meta_module_G2.M_VlnPlot.tiff", device = "tiff", path = plot_dir, width = 5, dpi = fig_dpi)
+ggsave(filename = "meta_module_G2.M_VlnPlot.tiff", device = "tiff", path = plots_dir, width = 5, dpi = fig_dpi)
 
 
 # Plot TCGA score
@@ -114,21 +131,22 @@ for (i in 1:3){
 
 TCGA_names <- c("TCGA_Mesenchymal", "TCGA_Proneural", "TCGA_Classical")
 
-FeaturePlot(GBM, features = TCGA_names, reduction = "umap", min.cutoff = 'q15', ncol = 3, pt.size = 0.1, label = TRUE, order = TRUE)
-ggsave(filename = "TCGA_FeaturePlot.tiff", device = "tiff", path = plot_dir,width = 21, height = 7, dpi = fig_dpi)
+FeaturePlot(GBM, features = TCGA_names, reduction = "umap",
+            min.cutoff = 'q15', ncol = 3, pt.size = 0.1, label = TRUE, order = TRUE)
+ggsave(filename = "TCGA_FeaturePlot.tiff", device = "tiff", path = plots_dir,width = 21, height = 7, dpi = fig_dpi)
 
 VlnPlot(GBM, features = TCGA_names, pt.size = 0.01) + NoLegend()
-ggsave(filename = "TCGA_VlnPlot.tiff", device = "tiff", path = plot_dir, width = 15, height = 7, dpi = fig_dpi)
+ggsave(filename = "TCGA_VlnPlot.tiff", device = "tiff", path = plots_dir, width = 15, height = 7, dpi = fig_dpi)
 
 VlnPlot(GBM, features = "TCGA_Mesenchymal", y.max = 3, pt.size = 0.01) + NoLegend()
-ggsave(filename = "TCGA_Mesenchymal_VlnPlot.tiff", device = "tiff", path = plot_dir, width = 5, dpi = fig_dpi)
+ggsave(filename = "TCGA_Mesenchymal_VlnPlot.tiff", device = "tiff", path = plots_dir, width = 5, dpi = fig_dpi)
 VlnPlot(GBM, features = "TCGA_Proneural", y.max = 1.5, pt.size = 0.01) + NoLegend()
-ggsave(filename = "TCGA_Proneural_VlnPlot.tiff", device = "tiff", path = plot_dir, width = 5, dpi = fig_dpi)
+ggsave(filename = "TCGA_Proneural_VlnPlot.tiff", device = "tiff", path = plots_dir, width = 5, dpi = fig_dpi)
 VlnPlot(GBM, features = "TCGA_Classical", y.max = 3, pt.size = 0.01) + NoLegend()
-ggsave(filename = "TCGA_Classical_VlnPlot.tiff", device = "tiff", path = plot_dir, width = 5, dpi = fig_dpi)
+ggsave(filename = "TCGA_Classical_VlnPlot.tiff", device = "tiff", path = plots_dir, width = 5, dpi = fig_dpi)
 
 
-# Plot cluster by tumor informations.
+# Plot cluster by tumor information.
 Primary <- as.data.frame(table(GBM$integrated_snn_res.0.2[GBM$tumor_type == "Primary"]))
 Primary$tumor <- "Primary"
 Primary$Freq <- Primary$Freq / sum(Primary$Freq) * 100
@@ -146,7 +164,7 @@ group %>%
   ggplot(aes(x = Cluster_integrated_snn_res.0.2, y = proportion_by_tumor, fill = tumor)) + 
   geom_col(alpha = 0.8, position = position_dodge2(), width = 0.8) +
   theme_classic()
-ggsave(filename = "tumor_by_cluster0.2_geom_bar.tiff", device = "tiff", path = plot_dir, width = 14, dpi = fig_dpi)
+ggsave(filename = "tumor_by_cluster0.2_geom_bar.tiff", device = "tiff", path = plots_dir, width = 14, dpi = fig_dpi)
 
 
 # Chisq.test of cluster by tumor.
@@ -211,4 +229,4 @@ ego2 <- enrichGO(gene          = cluster_markers,
 p1 <- dotplot(ego1, showCategory=30)
 p2 <- dotplot(ego2, showCategory=30)
 p1 + p2
-ggsave(filename = "cluster7_GO.tiff", device = "tiff", path = plot_dir, width = 16, height = 7, dpi = fig_dpi)
+ggsave(filename = "cluster7_GO.tiff", device = "tiff", path = plots_dir, width = 16, height = 7, dpi = fig_dpi)

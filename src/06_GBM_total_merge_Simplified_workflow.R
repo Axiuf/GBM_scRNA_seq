@@ -1,34 +1,34 @@
-# When you have got a comprehensive understand of your data, a simplified workflow will help a lot since
+# When you have got a comprehensive understand of your data, a simplified work flow will help a lot since
 # many explorative steps are redundant and only a few key parameters need to be modified.
 # Here we add "vars.to.regress = "percent.mt" in data normalization process to regress out the impact of
 # mitochondrial genes.
-# We also adjust some QC thresholds.
+# We also adjust some QC thresholds
 
 
-# Set environment.
+# Set environment
 source("requirements.R")
-dir.create("./plots/06_GBM_total_merge_Simplified_workflow")
-fig_dpi <- 150
+plot_dir <- "./plots/06_GBM_total_merge_Simplified_workflow"
+dir.create(plot_dir)
 
 
-# Get Seurat object.
+# Get Seurat object
 GBM <- readRDS("./data/01_Creat_seurat_objects/merged_objects/GBM_total_merge.rds")
 
 
 # QC
-# Add more metrics to meta.data.
+# Add more metrics to meta.data
 GBM[["percent.mt"]] <- PercentageFeatureSet(GBM, pattern = "^MT-")
 GBM$log10GenesPerUMI <- log10(GBM$nFeature_RNA) / log10(GBM$nCount_RNA)
 
 
-# Filter cells in the raw data.
+# Filter cells in the raw data
 GBM <- subset(x = GBM, subset = (nCount_RNA >= 1000) & 
                          (nFeature_RNA >= 600) & 
                          (log10GenesPerUMI > 0.80) & 
                          (percent.mt < 10))
 
 
-# Filter genes in the raw data.
+# Filter genes in the raw data
 counts <- GetAssayData(object = GBM, slot = "counts")
 nonzero <- counts > 0
 keep_genes <- Matrix::rowSums(nonzero) >= 10
@@ -37,7 +37,7 @@ GBM <- CreateSeuratObject(counts, meta.data = GBM@meta.data)
 Idents(GBM) <- "orig.ident"
 
 
-# Calculate cell cycle score.
+# Calculate cell cycle score
 GBM <- NormalizeData(GBM, normalization.method = "LogNormalize", scale.factor = 100000)
 
 load("./data/cycle.rda")
@@ -63,12 +63,15 @@ Idents(GBM) <- "SCT_snn_res.0.2"
 GBM <- RunUMAP(GBM, dims = 1:60)
 
 
-# Plot UMAP/tSNE under different resolutions.
+# Plot UMAP/tSNE under different resolutions
 for(cluster_resolution in cluster_resolutions){
-  plot1 <- DimPlot(GBM, reduction = "umap", pt.size = 0.1, group.by = paste0("SCT_snn_res.", cluster_resolution), label = TRUE)
-  plot2 <- DimPlot(GBM, reduction = "umap", pt.size = 0.1, group.by = "orig.ident", label = TRUE)
+  plot1 <- DimPlot(GBM, reduction = "umap", group.by = paste0("SCT_snn_res.", cluster_resolution),
+                   pt.size = 0.1, label = TRUE)
+  plot2 <- DimPlot(GBM, reduction = "umap", group.by = "orig.ident",
+                   pt.size = 0.1, label = TRUE)
   plot1 + plot2
-  ggsave(filename = paste0("umap_res", cluster_resolution, "_DimHeatmap.tiff"), device = "tiff", path = "./plots/06_GBM_total_merge_Simplified_workflow",width = 20, height = 7, dpi = fig_dpi)
+  ggsave(filename = paste0("umap_res", cluster_resolution, "_DimPlot.tiff"),
+         device = "tiff", path = plot_dir, width = 20, height = 7, dpi = fig_dpi)
 }
 
 
@@ -81,7 +84,8 @@ FeaturePlot(GBM,
             order = TRUE,
             min.cutoff = 'q15',
             label = TRUE)
-ggsave(filename = "metrics_FeaturePlot.tiff", device = "tiff", path = "./plots/06_GBM_total_merge_Simplified_workflow", width = 16, height = 21, dpi = fig_dpi)
+ggsave(filename = "metrics_FeaturePlot.tiff",
+       device = "tiff", path = plot_dir, width = 16, height = 21, dpi = fig_dpi)
 
 
 saveRDS(GBM, file = "./data/06_GBM_total_merge_Simplified_workflow_regress_mt.rds")
