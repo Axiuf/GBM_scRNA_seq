@@ -16,3 +16,6 @@
 *.pdf
 *.tiff
 *.pptx
+
+# shell script pipeline
+src/00_pipeline.sh
