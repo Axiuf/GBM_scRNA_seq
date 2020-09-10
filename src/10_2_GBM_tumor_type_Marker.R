@@ -1,5 +1,9 @@
 # Set environment
 source("requirements.R")
+library(readxl)
+library(clusterProfiler)
+library(DOSE)
+library(enrichplot)
 
 
 plots_dir <- "./plots/10_2_GBM_tumor_type_Marker"
@@ -81,7 +85,6 @@ ggsave(filename = "Cell_type_markers_FeaturePlot.tiff",
 
 # Plot meta module score by PercentageFeatureSet
 # https://doi.org/10.1016/j.cell.2019.06.024
-library(readxl)
 meta_module <- read_excel("data/1-s2.0-S0092867419306877-mmc2.xlsx", skip = 4)
 for (i in 1:8){
   score_name <- paste0("meta_module_", names(meta_module)[i])
