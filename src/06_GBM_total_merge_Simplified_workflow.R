@@ -12,7 +12,7 @@ dir.create(plot_dir)
 
 
 # Get Seurat object
-GBM <- readRDS("./data/01_Creat_seurat_objects/merged_objects/GBM_total_merge.rds")
+GBM <- readRDS("./data/01_Create_seurat_objects/merged_objects/GBM_total_merge.rds")
 
 
 # QC

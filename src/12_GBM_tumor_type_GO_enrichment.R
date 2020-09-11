@@ -3,6 +3,7 @@ source("requirements.R")
 library(clusterProfiler)
 library(DOSE)
 library(enrichplot)
+library(org.Hs.eg.db)
 
 
 plots_dir <- "./plots/12_GBM_tumor_type_GO_enrichment"
@@ -24,7 +25,7 @@ for(i in 0:10){
   
   
   markers <- dplyr::arrange(markers["avg_logFC"], -avg_logFC)
-  markers <- rownames(markers[markers$avg_logFC > log(2)])
+  markers <- rownames(markers)[markers$avg_logFC > log(2)]
   markers_IDs <- bitr(markers, fromType = "SYMBOL", 
                   toType = c("ENSEMBL", "ENTREZID"),
                   OrgDb = org.Hs.eg.db)
@@ -51,6 +52,6 @@ for(i in 0:10){
   p1 <- dotplot(ego1, showCategory = 30)
   p2 <- dotplot(ego2, showCategory = 30)
   p1 + p2
-  ggsave(filename = paste0("cluster", i, "_GO.rds"),
+  ggsave(filename = paste0("cluster", i, "_GO.tiff"),
          device = "tiff", path = plots_dir, width = 16, height = 7, dpi = fig_dpi)
 }
