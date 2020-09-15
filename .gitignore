@@ -11,8 +11,7 @@
 .Ruserdata
 
 # Project output
-*.rds
-*.png
-*.pdf
-*.tiff
-*.pptx
+/data
+!/data/supplementaries
+/plots
+/report
