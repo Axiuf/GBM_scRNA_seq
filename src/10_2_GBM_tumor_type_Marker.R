@@ -45,6 +45,10 @@ metadata %>%
 ggsave(filename = "percent.mt_geom_freqpoly.tiff",
        device = "tiff", path = plots_dir, width = 10, height = 5, dpi = fig_dpi)
 
+VlnPlot(GBM, features = c("percent.mt", "nCount_RNA", "nFeature_RNA"), pt.size = 0.01, ncol = 3)
+ggsave(filename = "percent.mt_VlnPlot.tiff",
+       device = "tiff", path = plots_dir, width = 15, height = 5, dpi = fig_dpi)
+
 
 # Plot CD133_patient subset
 FeaturePlot(GBM, features = c("PROM1"), reduction = "umap",
@@ -114,3 +118,41 @@ E <- chisq.test(group)$expected
 O <- chisq.test(group)$observed
 (O - E)^2 / E
 saveRDS(group, paste0(data_dir, "/cluster_by_tumor_chisq_test.rds"))
+
+
+# Identify cluster 9&10
+GBM_total_merge <- readRDS("./data/05_GBM_total_merge_filtered_SCT_umap&tsne_Marker.rds")
+GBM_total_integrate <- readRDS("./data/09_3_GBM_tumor_type_SCTIntegrate/integrate_dim_30.rds")
+
+cluster9 <- rownames(GBM@meta.data)[GBM@meta.data$integrated_snn_res.0.2 == 9]
+cluster10 <- rownames(GBM@meta.data)[GBM@meta.data$integrated_snn_res.0.2 == 10]
+
+plot_1 <- DimPlot(GBM_total_merge, reduction = "umap", group.by = "SCT_snn_res.0.01", pt.size = 0.1, label = TRUE)
+plot_2 <- DimPlot(GBM_total_merge, reduction = "umap", cells.highlight = cluster9,
+                  pt.size = 0.1, sizes.highlight = 0.2) + NoLegend()
+plot_3 <- DimPlot(GBM_total_merge, reduction = "umap", cells.highlight = cluster10,
+                  pt.size = 0.1, sizes.highlight = 0.2) + NoLegend()
+plot_1 + plot_2 + plot_3
+ggsave(filename = "GBM_total_merge_tumor_cluster9&10_DimPlot.tiff", 
+       device = "tiff", path = plots_dir, width = 21, dpi = fig_dpi)
+
+
+plot_1 <- DimPlot(GBM_total_integrate, reduction = "umap", group.by = "integrated_snn_res.0.1",
+                  pt.size = 0.1, label = TRUE)
+plot_2 <- DimPlot(GBM_total_integrate, reduction = "umap", cells.highlight = cluster9,
+                  pt.size = 0.1, sizes.highlight = 0.2) + NoLegend()
+plot_3 <- DimPlot(GBM_total_integrate, reduction = "umap", cells.highlight = cluster10,
+                  pt.size = 0.1, sizes.highlight = 0.2) + NoLegend()
+plot_1 + plot_2 + plot_3
+ggsave(filename = "GBM_total_integrate_tumor_cluster9&10_DimPlot.tiff", 
+       device = "tiff", path = plots_dir, width = 21, dpi = fig_dpi)
+
+
+plot_1 <- DimPlot(GBM, reduction = "umap", group.by = "integrated_snn_res.0.2", pt.size = 0.1, label = TRUE)
+plot_2 <- DimPlot(GBM, reduction = "umap", cells.highlight = cluster9,
+                  pt.size = 0.1, sizes.highlight = 0.2) + NoLegend()
+plot_3 <- DimPlot(GBM, reduction = "umap", cells.highlight = cluster10,
+                  pt.size = 0.1, sizes.highlight = 0.2) + NoLegend()
+plot_1 + plot_2 + plot_3
+ggsave(filename = "GBM_tumor_cluster9&10_DimPlot.tiff", 
+       device = "tiff", path = plots_dir, width = 21, dpi = fig_dpi)

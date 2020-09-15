@@ -71,7 +71,7 @@ for(cluster_resolution in cluster_resolutions){
   plot3 <- DimPlot(GBM.integrated, reduction = "umap", group.by = "patient", pt.size = 0.1, )
   plot1 + plot2 + plot3
   ggsave(filename = paste0("umap_res", cluster_resolution, "_DimPlot.tiff"),
-         device = "tiff", path = plots_subdir, width = 16, height = 7, dpi = fig_dpi)
+         device = "tiff", path = plots_subdir, width = 21, height = 7, dpi = fig_dpi)
 }
 
 

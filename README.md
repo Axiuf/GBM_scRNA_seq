@@ -10,6 +10,7 @@ The file structure shows as below :
     ├── src # All source code files are stored here
     ├── plots # Figures out put from the project
     ├── data 
+    │   ├── supplementaries # support files used in analysis
     │   └── Cellranger # Raw data from Cell ranger (10X)
     ├── .gitignore
     ├── GBM_scRNA_seq.Rproj
