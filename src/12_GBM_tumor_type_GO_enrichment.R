@@ -18,40 +18,81 @@ DefaultAssay(GBM) <- "RNA"
 Idents(GBM) <- "integrated_snn_res.0.2"
 
 
+# Find universe gene
+universe_gene <- rownames(GBM)
+saveRDS(universe_gene, paste0(data_dir, "/universe_gene.rds"))
+
+universe_gene <- readRDS(paste0(data_dir, "/universe_gene.rds"))
+universe_IDs <- bitr(universe_gene, fromType = "SYMBOL", 
+                     toType = c("ENTREZID"),
+                     OrgDb = org.Hs.eg.db)
+universe_gene <- universe_IDs$ENTREZID
+
+
 # Find markers
 for(i in 0:10){
   markers <- FindMarkers(GBM, ident.1 = i, min.pct = 0.25)
   saveRDS(markers, paste0(data_dir, "/cluster", i, "_markers.rds"))
+}
+
+markers <- FindMarkers(GBM, ident.1 = 0, ident.2 = 1, min.pct = 0.25)
+saveRDS(markers, paste0(data_dir, "/cluster0to1_markers.rds"))
+markers <- FindMarkers(GBM, ident.1 = 1, ident.2 = 0, min.pct = 0.25)
+saveRDS(markers, paste0(data_dir, "/cluster1to0_markers.rds"))
+
+
+# Go enrichment
+for(i in 0:10){
+  # Prepare for input
+  markers <- readRDS(paste0(data_dir, "/cluster", i, "_markers.rds"))
+  markers <- dplyr::arrange(markers, -avg_logFC)
   
-  
-  markers <- dplyr::arrange(markers["avg_logFC"], -avg_logFC)
-  markers <- rownames(markers)[markers$avg_logFC > log(2)]
-  markers_IDs <- bitr(markers, fromType = "SYMBOL", 
-                  toType = c("ENSEMBL", "ENTREZID"),
+  markers_name <- rownames(markers)
+  markers_IDs <- bitr(markers_name, fromType = "SYMBOL", 
+                  toType = c("ENTREZID"),
                   OrgDb = org.Hs.eg.db)
-  markers <- markers_IDs$ENTREZID
-  markers <- markers[!duplicated(markers)]
+  markers_name <- markers_IDs$SYMBOL
   
+  markers_List <- markers$avg_logFC[rownames(markers) %in% markers_name]
+  names(markers_List) <- markers_IDs$ENTREZID
+  markers_name <- names(markers_List)[markers_List > 0]
   
-  ego1 <- enrichGO(gene          = markers,
+  # GO ORA
+  ego1 <- enrichGO(gene          = markers_name,
                    OrgDb         = org.Hs.eg.db,
                    ont           = "BP",
                    pAdjustMethod = "BH",
                    pvalueCutoff  = 0.05,
                    qvalueCutoff  = 0.2,
                    readable      = TRUE)
+  ego1 <- simplify(ego1)
+  dotplot(ego1)
+  ggsave(filename = paste0("cluster", i, "_enrichGO_dotplot.tiff"),
+         device = "tiff", path = plots_dir, width = 8, height = 6, dpi = fig_dpi)
+  emapplot(ego1, showCategory = 30, layout = "kk")
+  ggsave(filename = paste0("cluster", i, "_enrichGO_emapplot.tiff"),
+         device = "tiff", path = plots_dir, width = 8, height = 8, dpi = fig_dpi)
   
-  ego2 <- enrichGO(gene          = markers,
-                   OrgDb         = org.Hs.eg.db,
-                   ont           = "CC",
-                   pAdjustMethod = "BH",
-                   pvalueCutoff  = 0.05,
-                   qvalueCutoff  = 0.2,
-                   readable      = TRUE)
+  # GO GSEA
+  ego2 <- gseGO(geneList     = markers_List,
+                OrgDb        = org.Hs.eg.db,
+                ont          = "BP",
+                pvalueCutoff = 0.05)
+  ego2 <- simplify(ego2)
+  emapplot(ego2, showCategory = 30, layout = "kk", color = "NES")
+  ggsave(filename = paste0("cluster", i, "_gseGO_emapplot.tiff"),
+         device = "tiff", path = plots_dir, width = 8, height = 8, dpi = fig_dpi)
+  ridgeplot(ego2, showCategory = 20)
+  ggsave(filename = paste0("cluster", i, "_gseGO_ridgeplot.tiff"),
+         device = "tiff", path = plots_dir, width = 12, height = 10, dpi = fig_dpi)
   
-  p1 <- dotplot(ego1, showCategory = 30)
-  p2 <- dotplot(ego2, showCategory = 30)
-  p1 + p2
-  ggsave(filename = paste0("cluster", i, "_GO.tiff"),
-         device = "tiff", path = plots_dir, width = 16, height = 7, dpi = fig_dpi)
+  # KEGG ORA
+  kk <- gseKEGG(geneList      = markers_List,
+                 minGSSize    = 1,
+                 organism     = 'hsa',
+                 pvalueCutoff = 0.05)
+  
+  ridgeplot(kk, showCategory = 20)
+  ggsave(filename = paste0("cluster", i, "_gseKEGG_ridgeplot.tiff"),
+         device = "tiff", path = plots_dir, width = 12, height = 10, dpi = fig_dpi)
 }

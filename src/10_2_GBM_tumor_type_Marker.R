@@ -156,3 +156,83 @@ plot_3 <- DimPlot(GBM, reduction = "umap", cells.highlight = cluster10,
 plot_1 + plot_2 + plot_3
 ggsave(filename = "GBM_tumor_cluster9&10_DimPlot.tiff", 
        device = "tiff", path = plots_dir, width = 21, dpi = fig_dpi)
+
+
+# Find all markers
+all_markers <- FindAllMarkers(GBM, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+all_markers %>% group_by(cluster) %>% top_n(n = 5, wt = avg_logFC)
+saveRDS(all_markers, paste0(data_dir, "/all_markers.rds"))
+
+all_markers_name <- rownames(all_markers)
+GBM <- ScaleData(GBM, features = all_markers_name)
+saveRDS(GBM, paste0(data_dir, "/10_2_GBM_tumor_type_Marker.rds"))
+
+top20 <- all_markers %>% group_by(cluster) %>% top_n(n = 20, wt = avg_logFC)
+DoHeatmap(GBM, features = top20$gene)
+ggsave(filename = "all_markers_DoHeatmap.pdf",
+       device = "pdf", path = plots_dir, width = 24, height = 24, dpi = fig_dpi)
+
+
+# Plot cluster markers
+DotPlot(GBM, features = "MKI67") + RotatedAxis()
+ggsave(filename = "Progenitor_DotPlot.tiff",
+       device = "tiff", path = plots_dir, width = 4, height = 7, dpi = fig_dpi)
+
+signature_markers <- c("OLIG2", "OLIG1", "APOD", "PLLP", "PLP1", "OMG")
+DotPlot(GBM, features = signature_markers) + RotatedAxis()
+ggsave(filename = "Oligo_DotPlot.tiff",
+       device = "tiff", path = plots_dir, width = 8, height = 7, dpi = fig_dpi)
+
+signature_markers <- c("GFAP", "S100A10", "HOPX", "CD44")
+DotPlot(GBM, features = signature_markers) + RotatedAxis()
+ggsave(filename = "Astro_DotPlot.tiff",
+       device = "tiff", path = plots_dir, width = 6, height = 7, dpi = fig_dpi)
+
+signature_markers <- c("STMN1", "SOX11", "DCX", "NSG1")
+DotPlot(GBM, features = signature_markers) + RotatedAxis()
+ggsave(filename = "Neuro_DotPlot.tiff",
+       device = "tiff", path = plots_dir, width = 6, height = 7, dpi = fig_dpi)
+
+signature_markers <- c("GAPDH", "VEGFA", "HILPDA", "ADM")
+DotPlot(GBM, features = signature_markers) + RotatedAxis()
+ggsave(filename = "Hypoxia_DotPlot.tiff",
+       device = "tiff", path = plots_dir, width = 6, height = 7, dpi = fig_dpi)
+
+signature_markers <- c("AIF1", "FCGR3A", "MS4A7", "CD68")
+DotPlot(GBM, features = signature_markers) + RotatedAxis()
+ggsave(filename = "Microglia_DotPlot.tiff",
+       device = "tiff", path = plots_dir, width = 6, height = 7, dpi = fig_dpi)
+
+signature_markers <- c("ISG15", "IFI6", "MX1", "IFIT1")
+DotPlot(GBM, features = signature_markers) + RotatedAxis()
+ggsave(filename = "Interferon_activated_DotPlot.tiff",
+       device = "tiff", path = plots_dir, width = 6, height = 7, dpi = fig_dpi)
+
+signature_markers <- c("CD3D", "CREM", "HSPH1", "SELL", "GIMAP5", "CACYBP", "GNLY", "NKG7", "CCL5", 
+                       "CD8A", "MS4A1", "CD79A", "MIR155HG", "NME1", "FCGR3A", "VMO1", "CCL2", "S100A9", "HLA-DQA1", 
+                       "GPR183", "PPBP", "GNG11", "HBA2", "HBB", "TSPAN13", "IL3RA", "IGJ")
+DotPlot(GBM, features = signature_markers) + RotatedAxis()
+ggsave(filename = "Immu_DotPlot.tiff",
+       device = "tiff", path = plots_dir, width = 12, height = 7, dpi = fig_dpi)
+
+signature_markers <- c("HSPA1B", "DNAJB1", "HSPB1")
+DotPlot(GBM, features = signature_markers) + RotatedAxis()
+ggsave(filename = "Heat_responsed_activated_DotPlot.tiff",
+       device = "tiff", path = plots_dir, width = 5, height = 7, dpi = fig_dpi)
+
+signature_markers <- c("HLA-A", "APOE", "BCL3", "VIM", "CD44", "ANXA1", "ITGB1", "TGFBI", "LOX", "COL1A2", "VDR",
+                       "IL6", "MMP7", "ANXA2", "CHI3L1", "RELB", "TLR2", "TLR4", "CASP1")
+DotPlot(GBM, features = signature_markers) + RotatedAxis()
+ggsave(filename = "Mes_DotPlot.tiff",
+       device = "tiff", path = plots_dir, width = 12, height = 7, dpi = fig_dpi)
+
+
+# Name new clusters
+new.cluster.ids <- c("Oligo", "Astrocytic", "Low quality cell", "Progenitor(S)",
+                     "Hypoxia", "Neuronal", "Progenitor(G2/M)",
+                     "Low quality cell", "Heat responsed", "Microglia(malignant)", "Interferon activated")
+names(new.cluster.ids) <- levels(GBM)
+GBM <- RenameIdents(GBM, new.cluster.ids)
+DimPlot(GBM, reduction = "umap", label = TRUE, pt.size = 0.1) + NoLegend()
+ggsave(filename = "New_cluster_DimPlot.tiff",
+       device = "tiff", path = plots_dir, width = 7, height = 7, dpi = fig_dpi)
