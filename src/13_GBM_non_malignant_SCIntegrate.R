@@ -120,7 +120,7 @@ new.cluster.ids <- c("Mono(microglia)", "Mono(microglia)", "oligodendrocytes", "
                      "Circulating Mono", "Mono(microglia)", "CD14 Mono", "pDC")
 names(new.cluster.ids) <- levels(GBM)
 GBM <- RenameIdents(GBM, new.cluster.ids)
-GBM$new.cluster.ids <- GBM@active.ident
+GBM$cell_type_annotation <- GBM@active.ident
 DimPlot(GBM, reduction = "umap", label = TRUE, pt.size = 0.1) + NoLegend()
 ggsave(filename = "New_cluster_DimPlot.tiff",
        device = "tiff", path = plots_dir, width = 7, height = 7, dpi = fig_dpi)

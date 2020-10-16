@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Stand work flow
+# Standard work flow
 # Rscript ./src/01_Create_seurat_objects.R
 # Rscript ./src/02_GBM_total_merge_QC.R
 # Rscript ./src/03_1_GBM_total_merge_Normalization1_SCTransform.R
