@@ -1,9 +1,11 @@
 ---
 title: "Seurat - Guided Clustering Tutorial"
 output:
+  word_document: default
   html_document:
     theme: united
     df_print: kable
+  pdf_document: default
 date: 'Compiled: `r format(Sys.Date(), "%B %d, %Y")`'
 ---
 ***

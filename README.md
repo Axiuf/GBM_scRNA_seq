@@ -2,7 +2,7 @@
 
 This is my single cell RNA-seq analysis pipeline for the glioblastoma (GBM) project.
 
-The file structure shows as below :
+The file structure is shown below :
 
 ```
 .
